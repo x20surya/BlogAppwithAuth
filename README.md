@@ -4,6 +4,6 @@ npm i
 
 then,
 
-nodemon index.js,
+node app.js,
 
 make your own account and then login,
