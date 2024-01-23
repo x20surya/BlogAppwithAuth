@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap" rel="stylesheet">
+    <style>
+        div {
+            display: flex;
+            flex-direction: column;
+        }
+      body {
+        background-color: rgb(228, 227, 227);
+        display: flex;
+     justify-content: center;
+     align-items: center;
+     height: 100vh;
+      }
+
+      .lcontainer {
+        background-color: white;
+        box-shadow: 2px 2px 2px   rgb(185, 182, 182);
+     width: 400px;
+     height: 500px;
+     display: flex;
+     flex-direction: column;
+     justify-content: center;
+     align-items: flex-start;
+     padding-left: 50px;
+     gap: 30px;
+     
+     
+      }
+      .limg {
+        
+        width: 40%;
+      }
+      /* #emailInp {
+        width: 300px;
+      } */
+      #MainForm {
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+        margin-bottom: 60px;
+        margin-top: 0;
+        
+      }
+
+      #emailInp,#passwordInp {
+        padding-bottom: 10px;
+        padding-top: 10px;
+        width: 300px;
+        font-size: 17px;
+        border: none;
+        border-bottom: 1px solid rgb(106, 103, 103);
+      }
+      #signin {
+        padding-top: 5px;
+        padding-bottom: 5px;
+        border: 1px solid black;
+        width: 300px;
+        background-color: rgb(221, 61, 61);
+        cursor: pointer;
+        font-size: 15px;
+        color: rgb(42, 40, 40);
+      }
+      .lcontainer p {
+        font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+                "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+        padding: 0;
+        margin: 0;
+        font-size: 24px;
+        font-weight:500 ;
+        
+      }
+      .reg {
+        display: flex;
+        flex-direction: row;
+        gap: 5px;
+
+      }
+      .reg .reg1 {
+        font-weight: 0;
+        font-size: 17px;
+        font-family:Arial, Helvetica, sans-serif;
+      }
+      .reg #b43 {
+        color: rgb(69, 69, 222);
+       cursor: pointer;
+       background-color: transparent;
+       border: none;
+       font-size: 15px;
+       
+      }
+    </style>
+</head>
+
+<body>
+    <div class="lcontainer">
+    
+    <p>Sign in</p>
+    <form id="MainForm">
+        <div>
+           
+            <input type="email" id="emailInp" placeholder="name@example.com">
+            
+
+        </div>
+        <div>
+            
+            <input type="password" id="passwordInp" placeholder="Password">
+            
+        </div>
+        
+        <button type="submit" id="signin"  >Log In</button>
+        <div class="reg">
+            <p class="reg1">No Account?</p>
+        <a href="./register.ejs"><button type="button" id="b43">Create New User!</button></a>
+    </div>
+    </form>
+</div>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, child, get, set, update, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBArOVoz0GEbbHzROw3CQy21xKzJZZBoyg",
+            authDomain: "gdsc-solution-d963e.firebaseapp.com",
+            databaseURL: "https://gdsc-solution-d963e-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "gdsc-solution-d963e",
+            storageBucket: "gdsc-solution-d963e.appspot.com",
+            messagingSenderId: "868921508827",
+            appId: "1:868921508827:web:4fb017bdd70b8a4ad19dfe",
+            measurementId: "G-Q8HQPBRYC8"
+        };
+
+
+        const app = initializeApp(firebaseConfig);
+       
+
+
+        const db = getDatabase();
+        const dbref = ref(db);
+        const auth = getAuth(app);
+        let EmailInp = document.getElementById("emailInp");
+        let PassInp = document.getElementById("passwordInp");
+        let FnameInp = document.getElementById("fnameInp");
+        let LnameInp = document.getElementById("lnameInp");
+        let MainForm = document.getElementById("MainForm");
+        let submitBtn = document.getElementById("singin")
+
+        let SignInUser = evt => {
+            evt.preventDefault();
+
+            signInWithEmailAndPassword(auth, EmailInp.value, PassInp.value)
+                .then((credentials) => {
+                    console.log(credentials)
+                    get(child(dbref,'UsersAuthList/'+credentials.user.uid))
+                    .then((snapshot)=>{
+                        if(snapshot.exists){
+                            sessionStorage.setItem("user-info",JSON.stringify({
+                                firstname: snapshot.val().firstname,
+                                lastname: snapshot.val().lastname,
+                            }))
+                            sessionStorage.setItem("user-creds",JSON.stringify(credentials.user));
+                            window.location.href = 'index.ejs';
+                        }
+                    })
+
+                })
+                .catch((error)=>{
+                    alert(error.message);
+                    console.log(error.code);
+                    console.log(error.message);
+                })
+        }
+
+        MainForm.addEventListener('submit',SignInUser)
+        submitBtn.addEventListener('click',SignInUser);
+    </script>
+</body>
+
+</html>

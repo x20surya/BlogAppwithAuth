@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+             div {
+            display: flex;
+            flex-direction: column;
+        }
+      body {
+        background-color: rgb(228, 227, 227);
+        display: flex;
+     justify-content: center;
+     align-items: center;
+     height: 100vh;
+      }
+
+      .lcontainer {
+        background-color: white;
+        box-shadow: 2px 2px 2px   rgb(185, 182, 182);
+     width: 400px;
+     height: 500px;
+     display: flex;
+     flex-direction: column;
+     justify-content: center;
+     align-items: flex-start;
+     padding-left: 50px;
+     gap: 5px;
+     
+     
+      }
+      .limg {
+        
+        width: 40%;
+        padding-bottom: 10px;
+        padding-top: 10px;
+      }
+      /* #emailInp {
+        width: 300px;
+      } */
+      #MainForm {
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+        margin-bottom: 30px;
+        margin-top: 0;
+        
+      }
+
+      #emailInp,#passwordInp,#fnameInp,#lnameInp {
+        padding-bottom: 10px;
+        padding-top: 10px;
+        width: 300px;
+        font-size: 17px;
+        border: none;
+        border-bottom: 1px solid rgb(106, 103, 103);
+      }
+      #signin {
+        padding-top: 5px;
+        padding-bottom: 5px;
+        border: 1px solid black;
+        width: 300px;
+        background-color: rgb(221, 61, 61);
+        cursor: pointer;
+        font-size: 15px;
+        color: rgb(42, 40, 40);
+      }
+      .lcontainer p {
+        font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+                "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+        padding: 0;
+        margin: 0;
+        font-size: 24px;
+        font-weight:500 ;
+        
+      }
+      .reg {
+        display: flex;
+        flex-direction: row;
+        gap: 5px;
+
+      }
+      
+      
+      .reg #b43 {
+        color: rgb(69, 69, 222);
+       cursor: pointer;
+       background-color: transparent;
+       border: none;
+       font-size: 15px;
+       
+      }
+    </style>
+</head>
+
+<body>
+    <div class="lcontainer">
+    
+    <p>Create Account</p>
+    <form id="MainForm">
+        <div>
+            <input type="email" id="emailInp" placeholder="name@example.com">
+           
+
+        </div>
+        <div>
+            <input type="password" id="passwordInp" placeholder="Password">
+            
+        </div>
+        <div>
+            <input type="text" id="fnameInp" placeholder="First Name">
+           
+
+        </div>
+        <div>
+            <input type="text" id="lnameInp" placeholder="Last Name">
+            
+
+        </div>
+        <button type="submit" id="signin">Create New User</button>
+        <div class="reg">
+           
+        <a href="login.ejs"><button type="button" id="b43">Sign In </button></a>
+    </div>
+    </form>
+</div>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, child, get, set, update, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBArOVoz0GEbbHzROw3CQy21xKzJZZBoyg",
+            authDomain: "gdsc-solution-d963e.firebaseapp.com",
+            databaseURL: "https://gdsc-solution-d963e-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "gdsc-solution-d963e",
+            storageBucket: "gdsc-solution-d963e.appspot.com",
+            messagingSenderId: "868921508827",
+            appId: "1:868921508827:web:4fb017bdd70b8a4ad19dfe",
+            measurementId: "G-Q8HQPBRYC8"
+        };
+
+
+        const app = initializeApp(firebaseConfig);
+
+
+
+        const db = getDatabase();
+        const auth = getAuth(app);
+        let EmailInp = document.getElementById("emailInp");
+        let PassInp = document.getElementById("passwordInp");
+        let FnameInp = document.getElementById("fnameInp");
+        let LnameInp = document.getElementById("lnameInp");
+        let MainForm = document.getElementById("MainForm");
+
+        let RegisterUser = evt => {
+            evt.preventDefault();
+
+            createUserWithEmailAndPassword(auth, EmailInp.value, PassInp.value)
+                .then((credentials) => {
+                    console.log(credentials)
+                    set(ref(db,'UsersAuthList/'+credentials.user.uid),{
+                        firstname: FnameInp.value,
+                        lastname: LnameInp.value
+                    })
+
+                })
+                .catch((error)=>{
+                    alert(error.message);
+                    console.log(error.code);
+                    console.log(error.message);
+                })
+        }
+
+        MainForm.addEventListener('submit',RegisterUser)
+    </script>
+</body>
+
+</html>
